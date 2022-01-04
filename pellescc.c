@@ -53,6 +53,7 @@ SOFTWARE.
 #include <string.h>
 #include <ctype.h>
 #include <time.h>
+#include <unistd.h>
 
 /* these here are the only 2 function using win32-specific APIs */
 #include <process.h>
@@ -118,6 +119,9 @@ LIST_ADD_PROTO(linkerflags)
 static char *assemblerflags[LIST_MAX];
 static int n_assemblerflags;
 LIST_ADD_PROTO(assemblerflags)
+static char *tempfiles[LIST_MAX];
+static int n_tempfiles;
+LIST_ADD_PROTO(tempfiles)
 
 
 static int warn, verbose, debug, strip, statik, shared, std=99, unschar;
@@ -148,7 +152,16 @@ static char* get_temp(void) {
 	char buf[64];
 	snprintf(buf, sizeof buf, "%016llx%08x.o", get_timestamp(), rand());
 	strcat(tempnambuf, buf);
+	add_tempfiles(strdup(tempnambuf));
 	return tempnambuf;
+}
+
+static void cleanup_tempfiles(void) {
+	int i;
+	for(i = 0; i < n_tempfiles; ++i) {
+		unlink(tempfiles[i]);
+		free(tempfiles[i]);
+	}
 }
 
 static void argv_add_incdirs(char** argv, int *n) {
@@ -315,6 +328,7 @@ enum workmode mode_from_ext(char *ext) {
 int main(int argc, char** argv) {
 	if(getenv("PELLESROOT")) pellesroot = getenv("PELLESROOT");
 	srand(get_timestamp());
+	atexit(cleanup_tempfiles);
 	char buf[1024];
 	snprintf(buf, sizeof buf, "%s\\Lib\\Win", pellesroot);
 	add_libdirs(strdup(buf));
