@@ -236,7 +236,7 @@ static void run_compiler(void) {
 	if(std == 99) argv[n++] = strdup("/std:C99");
 	else argv[n++] = strdup("/std:C11");
 	switch(opt) {
-	case 0: break;
+	case 0: case '0': break;
 	case '2': argv[n++] = strdup("/Ot"); break;
 	case '3': argv[n++] = strdup("/Ox"); break;
 	case '1':
@@ -347,7 +347,7 @@ int main(int argc, char** argv) {
 		else if(next_I) {add_incdirs(argv[i]); next_I = 0; }
 		else if(next_L) {add_libdirs(argv[i]); next_L = 0; }
 		else if(argv[i][0] == '-') switch(argv[i][1]) {
-			case 'g': debug = 1; break;
+			case 'g': debug = (argv[i][2] != '0'); break;
 			case 'v': verbose = 1; break;
 			case 'c': mode = wm_cc; break;
 			case 'E': mode = wm_cpp; break;
