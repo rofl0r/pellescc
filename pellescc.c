@@ -373,7 +373,7 @@ int main(int argc, char** argv) {
 					if(argv[i][2] == 0) strip = 1;
 					else if(!strcmp(&argv[i][2], "tatic")) statik = 1;
 					else if(!strcmp(&argv[i][2], "hared")) shared = 1;
-					else if(!strncmp(&argv[i][2], "td=", 4)) std = parse_std(&argv[i][5]);
+					else if(!strncmp(&argv[i][2], "td=", 3)) std = parse_std(&argv[i][5]);
 					else ignore(argv[i]);
 					break;
 			case 'W':
